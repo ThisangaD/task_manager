@@ -128,40 +128,68 @@ export default function AuthPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Email</label>
-                <div className="relative group">
+              {/* Email Field */}
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px', marginLeft: '4px' }}>
+                  Email
+                </label>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
                   <input
                     type="email"
                     placeholder="name@example.com"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     required
-                    className="input-field pl-4"
+                    style={{
+                      width: '90%',
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      borderRadius: '12px',
+                      padding: '12px 16px',
+                      color: '#F8FAFC',
+                      fontSize: '14px',
+                      outline: 'none',
+                      fontFamily: 'inherit',
+                    }}
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Password</label>
-                <div className="relative group">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    className="input-field pl-4 pr-24"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-14 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                  >
-                    {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
-                  </button>
+              {/* Password Field */}
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px', marginLeft: '4px' }}>
+                  Password
+                </label>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <div style={{ position: 'relative', width: '90%' }}>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      required
+                      minLength={6}
+                      style={{
+                        width: '100%',
+                        background: 'rgba(255,255,255,0.03)',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        borderRadius: '12px',
+                        padding: '12px 48px 12px 16px',
+                        color: '#F8FAFC',
+                        fontSize: '14px',
+                        outline: 'none',
+                        fontFamily: 'inherit',
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', padding: '4px' }}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <EyeOff style={{ width: '18px', height: '18px' }} /> : <Eye style={{ width: '18px', height: '18px' }} />}
+                    </button>
+                  </div>
                 </div>
               </div>
 
