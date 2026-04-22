@@ -193,16 +193,23 @@ export default function AuthPage() {
                 </div>
               </div>
 
-              <button type="submit" disabled={loading} className="btn-primary w-full flex items-center justify-center gap-3 text-base py-3.5" style={{ marginTop: '24px' }}>
-                {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <>
-                    <span>{mode === 'login' ? 'Authorized Access' : 'Create Account'}</span>
-                    <ArrowRight className="w-5 h-5" />
-                  </>
-                )}
-              </button>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn-primary flex items-center justify-center gap-3 text-base py-3.5"
+                  style={{ width: '90%' }}
+                >
+                  {loading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      <span>{mode === 'login' ? 'Authorized Access' : 'Create Account'}</span>
+                      <ArrowRight className="w-5 h-5" />
+                    </>
+                  )}
+                </button>
+              </div>
             </form>
             
             <div className="mt-8 text-center">
