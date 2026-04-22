@@ -82,25 +82,7 @@ export default function AuthPage() {
             </p>
           </motion.div>
 
-          {/* Feature List */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4"
-          >
-            {[
-              { icon: <Zap className="w-5 h-5 text-amber-400" />, label: 'Ultra Fast' },
-              { icon: <ShieldCheck className="w-5 h-5 text-emerald-400" />, label: 'Secure Auth' },
-              { icon: <Sparkles className="w-5 h-5 text-purple-400" />, label: 'Cloud Sync' },
-              { icon: <CheckCircle2 className="w-5 h-5 text-cyan-400" />, label: 'Optimistic UI' }
-            ].map((feature, i) => (
-              <div key={i} className="flex items-center gap-3 text-slate-300 bg-white/5 p-3 rounded-xl border border-white/5">
-                {feature.icon}
-                <span className="text-sm font-medium">{feature.label}</span>
-              </div>
-            ))}
-          </motion.div>
+
         </div>
 
         {/* Auth Form Card */}
@@ -152,7 +134,7 @@ export default function AuthPage() {
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     required
-                    className="input-field pl-12"
+                    className="input-field pl-14"
                   />
                 </div>
               </div>
@@ -168,7 +150,7 @@ export default function AuthPage() {
                     onChange={e => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="input-field pl-12 pr-12"
+                    className="input-field pl-14 pr-12"
                   />
                   <button
                     type="button"
