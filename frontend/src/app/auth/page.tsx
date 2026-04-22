@@ -198,7 +198,7 @@ export default function AuthPage() {
                   type="submit"
                   disabled={loading}
                   className="btn-primary flex items-center justify-center gap-3 text-base py-3.5"
-                  style={{ width: '90%' }}
+                  style={{ width: '50%' }}
                 >
                   {loading ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
