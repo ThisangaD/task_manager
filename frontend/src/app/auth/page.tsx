@@ -103,16 +103,24 @@ export default function AuthPage() {
             </div>
 
             {/* Tab Selection */}
-            <div className="flex bg-white/5 rounded-2xl p-1.5 mb-8 border border-white/5">
+            <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', padding: '6px', marginBottom: '32px', border: '1px solid rgba(255,255,255,0.05)' }}>
               {(['login', 'register'] as const).map((m) => (
                 <button
                   key={m}
                   onClick={() => setMode(m)}
-                  className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ${
-                    mode === m
-                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/40'
-                      : 'text-slate-500 hover:text-slate-300'
-                  }`}
+                  style={{
+                    flex: 1,
+                    padding: '10px',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    background: mode === m ? '#9333ea' : 'transparent',
+                    color: mode === m ? '#ffffff' : '#64748b',
+                    boxShadow: mode === m ? '0 4px 15px rgba(147, 51, 234, 0.4)' : 'none',
+                  }}
                 >
                   {m === 'login' ? 'Sign In' : 'Sign Up'}
                 </button>
