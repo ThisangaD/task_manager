@@ -127,14 +127,13 @@ export default function AuthPage() {
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Email</label>
                 <div className="relative group">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-500 group-focus-within:text-purple-400 transition-colors" />
                   <input
                     type="email"
                     placeholder="name@example.com"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     required
-                    className="input-field pl-14"
+                    className="input-field pl-4"
                   />
                 </div>
               </div>
@@ -142,7 +141,6 @@ export default function AuthPage() {
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Password</label>
                 <div className="relative group">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-500 group-focus-within:text-purple-400 transition-colors" />
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
@@ -150,7 +148,7 @@ export default function AuthPage() {
                     onChange={e => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="input-field pl-14 pr-12"
+                    className="input-field pl-4 pr-12"
                   />
                   <button
                     type="button"
