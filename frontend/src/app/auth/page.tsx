@@ -108,17 +108,13 @@ export default function AuthPage() {
                 <button
                   key={m}
                   onClick={() => setMode(m)}
-                  className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 relative ${
-                    mode === m ? 'text-white' : 'text-slate-500 hover:text-slate-300'
+                  className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ${
+                    mode === m
+                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/40'
+                      : 'text-slate-500 hover:text-slate-300'
                   }`}
                 >
-                  {mode === m && (
-                    <motion.div 
-                      layoutId="activeTab"
-                      className="absolute inset-0 bg-brand-primary rounded-xl shadow-lg shadow-brand-primary/40"
-                    />
-                  )}
-                  <span className="relative z-10 capitalize">{m === 'login' ? 'Sign In' : 'Sign Up'}</span>
+                  {m === 'login' ? 'Sign In' : 'Sign Up'}
                 </button>
               ))}
             </div>
@@ -148,12 +144,12 @@ export default function AuthPage() {
                     onChange={e => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="input-field pl-4 pr-20"
+                    className="input-field pl-4 pr-24"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-10 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                    className="absolute right-14 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
