@@ -156,7 +156,7 @@ export default function AuthPage() {
               </div>
 
               {/* Password Field */}
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', marginTop: '20px' }}>
                 <label style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px', marginLeft: '4px' }}>
                   Password
                 </label>
@@ -193,7 +193,7 @@ export default function AuthPage() {
                 </div>
               </div>
 
-              <button type="submit" disabled={loading} className="btn-primary w-full flex items-center justify-center gap-3 text-base mt-2 py-3.5">
+              <button type="submit" disabled={loading} className="btn-primary w-full flex items-center justify-center gap-3 text-base py-3.5" style={{ marginTop: '24px' }}>
                 {loading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
