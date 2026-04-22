@@ -5,15 +5,30 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { useTasks } from '@/hooks/useTasks';
-import TaskCard from '@/components/TaskCard';
 import AddTaskModal from '@/components/AddTaskModal';
 import { Task, TaskFilter, Priority } from '@/types';
 import { 
-  Plus, LogOut, CheckCircle2, Loader2, ListChecks, 
-  Clock, LayoutDashboard, Calendar as CalendarIcon, TrendingUp, Search, AlertTriangle, Sparkles,
-  Moon, Sun, Menu, X
+  Plus, LogOut, CheckCircle2, Loader2,
+  Calendar as CalendarIcon,
+  Moon, Sun, Menu, X, Pencil, Trash2
 } from 'lucide-react';
 import Calendar from 'react-calendar';
+import {
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  FormControl,
+  Select,
+  MenuItem,
+  InputAdornment,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+} from '@mui/material';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 
 // --- Custom Calendar Styles ---
 // Using a template string to inject modern, dark-themed CSS for react-calendar
@@ -94,11 +109,12 @@ const calendarStyles = `
 export default function DashboardPage() {
   const router = useRouter();
   const { user, loading: authLoading, logout, updateDisplayName } = useAuth();
-  const [statusFilter, setStatusFilter] = useState<TaskFilter>('all');
+  const [statusFilter, setStatusFilter] = useState<TaskFilter | 'need-action'>('all');
   const [priorityFilter, setPriorityFilter] = useState<'all' | Priority>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Task | null>(null);
   
   // Profile Name Editing states
   const [isEditingName, setIsEditingName] = useState(false);
@@ -124,7 +140,7 @@ export default function DashboardPage() {
     return () => clearInterval(timer);
   }, []);
 
-  const { tasks, loading, createTask, toggleTask, updateTask, deleteTask } = useTasks('all');
+  const { tasks, createTask, updateTask, toggleTask, deleteTask } = useTasks('all');
 
   useEffect(() => {
     if (!authLoading && !user) router.replace('/auth');
@@ -151,6 +167,31 @@ export default function DashboardPage() {
     return daysUntilDue <= 2;
   }).length;
 
+  const filteredTasks = tasks.filter((task) => {
+    const isNeedActionTask = (() => {
+      if (task.isCompleted || !task.dueDate) return false;
+      const due = new Date(task.dueDate);
+      const daysUntilDue = (due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+      return daysUntilDue <= 2;
+    })();
+
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'pending' && !task.isCompleted) ||
+      (statusFilter === 'completed' && task.isCompleted) ||
+      (statusFilter === 'need-action' && isNeedActionTask);
+
+    const matchesPriority =
+      priorityFilter === 'all' ||
+      (task.priority || 'Medium') === priorityFilter;
+
+    const query = searchQuery.trim().toLowerCase();
+    const matchesSearch =
+      query.length === 0 || task.title.toLowerCase().includes(query);
+
+    return matchesStatus && matchesPriority && matchesSearch;
+  });
+
   const handleEditSave = async (id: number, payload: Partial<Task>) => {
     await updateTask(id, payload);
     setEditTask(null);
@@ -169,25 +210,6 @@ export default function DashboardPage() {
     if (hour < 18) return 'Good afternoon';
     return 'Good evening';
   };
-
-  const filteredTasks = tasks.filter((task) => {
-    const matchesStatus =
-      statusFilter === 'all' ||
-      (statusFilter === 'pending' && !task.isCompleted) ||
-      (statusFilter === 'completed' && task.isCompleted);
-
-    const matchesPriority =
-      priorityFilter === 'all' ||
-      (task.priority || 'Medium') === priorityFilter;
-
-    const query = searchQuery.trim().toLowerCase();
-    const matchesSearch =
-      query.length === 0 ||
-      task.title.toLowerCase().includes(query) ||
-      (task.description || '').toLowerCase().includes(query);
-
-    return matchesStatus && matchesPriority && matchesSearch;
-  });
 
   const displayName = user?.displayName || user?.email?.split('@')[0] || 'User';
 
@@ -438,154 +460,313 @@ export default function DashboardPage() {
                   <h2 className="text-3xl font-black text-white tracking-tight">Active Workflow</h2>
                   <p className="text-sm font-bold text-slate-500 mt-1">Track and manage your tasks from one place.</p>
                 </div>
-                <button
-                  onClick={() => { setEditTask(null); setIsModalOpen(true); }}
-                  className="btn-primary flex items-center gap-2.5 px-6 py-3 shadow-xl shadow-purple-600/20 active:scale-95 transition-transform"
-                >
-                  <Plus className="w-5 h-5" />
-                  <span className="font-bold">New Mission</span>
-                </button>
+                <div style={{ display: 'inline-block' }}>
+                  <style>{`
+                    .uiverse-btn {
+                      background: #0a1732;
+                      border-radius: 0.5em;
+                      box-shadow:
+                        inset 0px -6px 18px -6px rgba(3, 15, 20, 0),
+                        inset rgba(54, 69, 75, 1) -1px -1px 6px 0px,
+                        inset 12px 0px 12px -6px rgba(3, 15, 20, 0),
+                        inset -12px 0px 12px -6px rgba(3, 15, 20, 0),
+                        rgba(54, 69, 75, 1) -1px -1px 6px 0px;
+                      border: solid 2px #030f14;
+                      cursor: pointer;
+                      font-size: 18px;
+                      padding: 0.7em 1.7em;
+                      outline: none;
+                      transition: all 0.3s;
+                      user-select: none;
+                    }
+                    .uiverse-btn:hover {
+                      box-shadow:
+                        inset 0px -6px 18px -6px rgba(3, 15, 20, 1),
+                        inset 0px 6px 18px -6px rgba(3, 15, 20, 1),
+                        inset 12px 0px 12px -6px rgba(3, 15, 20, 0),
+                        inset -12px 0px 12px -6px rgba(3, 15, 20, 0),
+                        -1px -1px 6px 0px rgba(54, 69, 75, 1);
+                    }
+                    .uiverse-btn:active {
+                      box-shadow:
+                        inset 0px -12px 12px -6px rgba(3, 15, 20, 1),
+                        inset 0px 12px 12px -6px rgba(3, 15, 20, 1),
+                        inset 12px 0px 12px -6px rgba(3, 15, 20, 1),
+                        inset -12px 0px 12px -6px rgba(3, 15, 20, 1),
+                        -1px -1px 6px 0px rgba(54, 69, 75, 1);
+                    }
+                    .uiverse-text {
+                      color: #d0a756;
+                      font-weight: 700;
+                      margin: auto;
+                      transition: all 0.3s;
+                      width: max-content;
+                      display: block;
+                    }
+                    .uiverse-btn:hover .uiverse-text {
+                      transform: scale(0.9);
+                    }
+                    .uiverse-btn:active .uiverse-text {
+                      transform: scale(0.8);
+                    }
+                  `}</style>
+                  <button
+                    onClick={() => { setEditTask(null); setIsModalOpen(true); }}
+                    className="uiverse-btn"
+                  >
+                    <span className="uiverse-text">New Mission</span>
+                  </button>
+                </div>
               </div>
 
               {/* Status Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
                 {[
                   {
                     label: 'Total',
                     value: totalCount,
-                    icon: <LayoutDashboard className="w-5 h-5" />,
                     card: 'bg-gradient-to-b from-[#1E3A70]/80 to-[#132A56]/70 border-[#7CA3E8]/25',
-                    iconWrap: 'text-blue-200 bg-[#3C6EC0]/25',
                   },
                   {
                     label: 'Needs Attention',
                     value: needsAttentionCount,
-                    icon: <AlertTriangle className="w-5 h-5" />,
                     card: 'bg-gradient-to-b from-[#4A3A18]/78 to-[#35290F]/68 border-[#F2C96A]/28',
-                    iconWrap: 'text-amber-200 bg-[#B98726]/28',
                   },
                   {
                     label: 'In Progress',
                     value: pendingCount,
-                    icon: <Clock className="w-5 h-5" />,
                     card: 'bg-gradient-to-b from-[#2A2854]/78 to-[#1D1C3B]/68 border-[#A8A0FF]/26',
-                    iconWrap: 'text-violet-200 bg-[#5D58C9]/28',
                   },
                   {
                     label: 'Completed',
                     value: completedCount,
-                    icon: <ListChecks className="w-5 h-5" />,
                     card: 'bg-gradient-to-b from-[#163F35]/78 to-[#102F28]/68 border-[#74D4B4]/28',
-                    iconWrap: 'text-emerald-200 bg-[#2F9D7A]/28',
                   },
                 ].map((stat) => (
                   <div
                     key={stat.label}
                     className={`rounded-[24px] border p-5 shadow-[0_10px_30px_rgba(0,0,0,0.22)] backdrop-blur-sm transition-all hover:-translate-y-0.5 ${stat.card}`}
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <span className={`w-11 h-11 rounded-2xl flex items-center justify-center ${stat.iconWrap}`}>
-                        {stat.icon}
-                      </span>
-                      <span className="text-3xl font-black text-white leading-none">{stat.value}</span>
+                    <div className="flex items-center justify-between gap-4">
+                      <p className="text-[11px] font-black text-slate-200 uppercase tracking-widest translate-x-[10px]">{stat.label}</p>
+                      <span className="text-3xl font-black text-white leading-none -translate-x-[20px]">{stat.value}</span>
                     </div>
-                    <p className="text-[11px] font-black text-slate-200 uppercase tracking-widest">{stat.label}</p>
                   </div>
                 ))}
               </div>
 
-              {/* Task List Header */}
-              <div className="mb-4 flex items-center justify-between">
-                <div className="inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-purple-300">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  Task List
-                </div>
-                <p className="text-xs font-semibold text-slate-500">{filteredTasks.length} result{filteredTasks.length === 1 ? '' : 's'}</p>
-              </div>
-
-              {/* Task Filtering & Content */}
-              <div className="space-y-8">
-                <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-                    <div className="relative lg:col-span-1">
-                      <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                      <input
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search tasks by title or description"
-                        className="w-full rounded-xl border border-white/10 bg-white/[0.03] pl-9 pr-3 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none focus:border-purple-500/50"
-                      />
-                    </div>
-
-                    <div className="flex bg-white/[0.03] rounded-xl p-1 overflow-x-auto no-scrollbar border border-white/10">
-                      {[
-                        { key: 'all', label: 'All' },
-                        { key: 'pending', label: 'In Progress' },
-                        { key: 'completed', label: 'Completed' },
-                      ].map((tab) => (
-                        <button
-                          key={tab.key}
-                          onClick={() => setStatusFilter(tab.key as TaskFilter)}
-                          className={`flex-1 whitespace-nowrap px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${
-                            statusFilter === tab.key
-                              ? 'bg-purple-600 text-white'
-                              : 'text-slate-400 hover:text-slate-200'
-                          }`}
-                        >
-                          {tab.label}
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="flex bg-white/[0.03] rounded-xl p-1 overflow-x-auto no-scrollbar border border-white/10">
-                      {(['all', 'Low', 'Medium', 'High'] as const).map((p) => (
-                        <button
-                          key={p}
-                          onClick={() => setPriorityFilter(p)}
-                          className={`flex-1 whitespace-nowrap px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${
-                            priorityFilter === p
-                              ? 'bg-indigo-600 text-white'
-                              : 'text-slate-400 hover:text-slate-200'
-                          }`}
-                        >
-                          {p === 'all' ? 'All Priority' : p}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+              {/* Task List Container */}
+              <div className="mt-[30px] rounded-[28px] bg-gradient-to-b from-[#0E2145]/65 to-[#08162F]/70 p-6 min-h-[280px] shadow-[0_14px_36px_rgba(0,0,0,0.3)]">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-black text-slate-100 tracking-tight translate-x-[10px]">Tasks List</h3>
+                  <span className="text-xs font-semibold text-slate-400 -translate-x-[10px]">{filteredTasks.length} result{filteredTasks.length === 1 ? '' : 's'}</span>
                 </div>
 
-                <div className="min-h-[400px]">
-                  {loading ? (
-                    <div className="flex flex-col items-center justify-center py-32 bg-white/[0.01] rounded-[40px] border border-dashed border-white/5">
-                      <Loader2 className="w-10 h-10 text-purple-500 animate-spin" />
-                      <p className="mt-8 text-slate-500 font-bold uppercase tracking-[0.3em] text-xs">Synchronizing Workspace</p>
-                    </div>
-                  ) : filteredTasks.length === 0 ? (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="text-center py-32 bg-white/[0.01] rounded-[40px] border border-dashed border-white/5"
+                <div className="mb-4">
+                  <TextField
+                    fullWidth
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by task name"
+                    size="small"
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchRoundedIcon sx={{ color: '#94a3b8', fontSize: 18 }} />
+                          </InputAdornment>
+                        ),
+                      }
+                    }}
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        color: '#e2e8f0',
+                        backgroundColor: 'rgba(10, 23, 50, 0.75)',
+                        '& fieldset': { borderColor: 'rgba(148, 163, 184, 0.18)' },
+                        '&:hover fieldset': { borderColor: 'rgba(148, 163, 184, 0.28)' },
+                        '&.Mui-focused fieldset': { borderColor: 'rgba(139, 92, 246, 0.65)' },
+                      },
+                      '& .MuiInputBase-input::placeholder': { color: '#64748b', opacity: 1 },
+                    }}
+                  />
+                </div>
+
+                <div className="mb-[30px] flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                  <ToggleButtonGroup
+                    value={statusFilter}
+                    exclusive
+                    onChange={(_, value) => {
+                      if (value) setStatusFilter(value as TaskFilter | 'need-action');
+                    }}
+                    sx={{
+                      backgroundColor: 'rgba(10, 23, 50, 0.75)',
+                      borderRadius: '12px',
+                      p: '4px',
+                      gap: '3px',
+                      '& .MuiToggleButton-root': {
+                        border: 'none',
+                        color: '#94a3b8',
+                        textTransform: 'none',
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        px: 1.8,
+                        py: 0.8,
+                        borderRadius: '9px',
+                      },
+                      '& .Mui-selected': {
+                        color: '#fff !important',
+                        backgroundColor: '#7c3aed !important',
+                        boxShadow: '0 8px 18px rgba(124,58,237,0.35)',
+                      },
+                    }}
+                  >
+                    <ToggleButton value="all">All</ToggleButton>
+                    <ToggleButton value="pending">In Progress</ToggleButton>
+                    <ToggleButton value="completed">Completed</ToggleButton>
+                    <ToggleButton value="need-action">Need Action</ToggleButton>
+                  </ToggleButtonGroup>
+
+                  <FormControl size="small" className="w-full md:w-[200px]">
+                    <Select
+                      value={priorityFilter}
+                      onChange={(e) => setPriorityFilter(e.target.value as 'all' | Priority)}
+                      sx={{
+                        borderRadius: '12px',
+                        color: '#e2e8f0',
+                        backgroundColor: 'rgba(10, 23, 50, 0.75)',
+                        '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(148, 163, 184, 0.18)' },
+                        '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(148, 163, 184, 0.28)' },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(99, 102, 241, 0.65)' },
+                        '& .MuiSvgIcon-root': { color: '#94a3b8' },
+                      }}
+                      MenuProps={{
+                        slotProps: {
+                          paper: {
+                            sx: {
+                              bgcolor: '#0a1732',
+                              color: '#e2e8f0',
+                              border: '1px solid rgba(148, 163, 184, 0.18)',
+                            },
+                          },
+                        },
+                      }}
                     >
-                      <CheckCircle2 className="w-12 h-12 text-slate-700 mx-auto mb-6" />
-                      <h3 className="text-xl font-black text-white mb-2">No Matching Tasks</h3>
-                      <p className="text-slate-500 text-sm max-w-[260px] mx-auto">Try changing search text or filters to see more tasks.</p>
-                    </motion.div>
+                      <MenuItem value="all">All</MenuItem>
+                      <MenuItem value="Low">Low</MenuItem>
+                      <MenuItem value="Medium">Medium</MenuItem>
+                      <MenuItem value="High">High</MenuItem>
+                    </Select>
+                  </FormControl>
+                </div>
+
+                <div className="rounded-2xl bg-white/[0.02] min-h-[200px] p-3">
+                  {filteredTasks.length === 0 ? (
+                    <div className="h-full min-h-[180px] flex items-center justify-center">
+                      <p className="text-sm text-slate-400">No tasks found for selected filters.</p>
+                    </div>
                   ) : (
-                    <AnimatePresence mode="popLayout" initial={false}>
-                      <div className="grid grid-cols-1 gap-4">
-                        {filteredTasks.map((task, index) => (
-                          <TaskCard
-                            key={task.id}
-                            task={task}
-                            index={index}
-                            onToggle={toggleTask}
-                            onDelete={deleteTask}
-                            onEdit={(t) => { setEditTask(t); setIsModalOpen(true); }}
-                          />
-                        ))}
-                      </div>
-                    </AnimatePresence>
+                    <div className="w-full overflow-x-auto rounded-xl bg-[#0A1732]/40 shadow-inner p-4">
+                      <table className="w-full text-left min-w-[800px]">
+                        <thead>
+                          <tr className="bg-white/[0.02]">
+                            <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-slate-400">Task Name</th>
+                            <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-slate-400">Status</th>
+                            <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-slate-400">Priority</th>
+                            <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-slate-400">Due Date</th>
+                            <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-slate-400 w-1/3">Description</th>
+                            <th className="px-5 py-4 text-xs font-black uppercase tracking-widest text-slate-400 text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr className="h-[5px]" aria-hidden="true" />
+                          {filteredTasks.map((task) => (
+                            <tr key={task.id} className="group even:bg-[#11244A]/30 odd:bg-transparent hover:bg-white/[0.05] transition-colors">
+                              {/* Task Name Column */}
+                              <td className="px-5 py-5 align-top">
+                                <span className={`font-semibold text-xs ${task.isCompleted ? 'text-slate-500' : 'text-slate-100'}`}>
+                                  {task.title}
+                                </span>
+                              </td>
+
+                              {/* Status Column */}
+                              <td className="px-5 py-5 align-top">
+                                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md inline-flex items-center justify-center
+                                  ${task.isCompleted 
+                                    ? 'bg-emerald-500/10 text-emerald-400' 
+                                    : 'bg-amber-500/10 text-amber-400'}
+                                `}>
+                                  {task.isCompleted ? 'Completed' : 'In Progress'}
+                                </span>
+                              </td>
+
+                              {/* Priority Column */}
+                              <td className="px-5 py-5 align-top">
+                                <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md inline-flex items-center justify-center
+                                  ${task.priority === 'High' ? 'bg-rose-500/10 text-rose-400' : 
+                                    task.priority === 'Medium' ? 'bg-amber-500/10 text-amber-400' : 
+                                    'bg-emerald-500/10 text-emerald-400'}`}
+                                >
+                                  {task.priority || 'Medium'}
+                                </span>
+                              </td>
+
+                              {/* Due Date Column */}
+                              <td className="px-5 py-5 align-top">
+                                <span className="text-[11px] font-semibold text-slate-300 whitespace-nowrap">
+                                  {task.dueDate
+                                      ? new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                                      : <span className="text-slate-500 italic">Not set</span>}
+                                </span>
+                              </td>
+
+                              {/* Description Column */}
+                              <td className="px-5 py-5 align-top">
+                                {task.description ? (
+                                  <p className={`text-[11px] font-semibold leading-relaxed line-clamp-2 group-hover:line-clamp-none transition-all ${task.isCompleted ? 'text-slate-500' : 'text-slate-300'}`}>
+                                    {task.description}
+                                  </p>
+                                ) : (
+                                  <span className="text-[11px] font-semibold text-slate-500 italic">Not set</span>
+                                )}
+                              </td>
+
+                              {/* Actions Column */}
+                              <td className="px-5 py-5 align-top">
+                                <div className="flex flex-wrap items-center justify-end gap-2.5">
+                                  <button
+                                    onClick={() => toggleTask(task.id, !task.isCompleted)}
+                                    className={`h-8 px-3 rounded-lg flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest transition-all duration-200 active:scale-95
+                                      ${task.isCompleted 
+                                        ? 'bg-slate-800/60 text-slate-400 hover:bg-slate-700 hover:text-white ring-1 ring-white/10 hover:ring-white/30 hover:scale-105 hover:shadow-lg' 
+                                        : 'bg-indigo-500 hover:bg-indigo-400 text-white ring-1 ring-indigo-500/50 hover:ring-indigo-300 shadow-[0_0_12px_rgba(99,102,241,0.3)] hover:shadow-[0_0_20px_rgba(99,102,241,0.6)] hover:scale-105'}
+                                    `}
+                                  >
+                                    {task.isCompleted ? 'Reopen' : 'Complete'}
+                                  </button>
+
+                                  <button
+                                    onClick={() => { setEditTask(task); setIsModalOpen(true); }}
+                                    className="h-8 px-3 rounded-lg flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white ring-1 ring-blue-500/30 hover:ring-blue-400 transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-[0_0_20px_rgba(59,130,246,0.6)]"
+                                    title="Edit Task Details"
+                                  >
+                                    <Pencil className="w-3 h-3" /> <span className="hidden lg:inline">Edit</span>
+                                  </button>
+                                  
+                                  <button
+                                    onClick={() => setDeleteTarget(task)}
+                                    className="h-8 px-3 rounded-lg flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white ring-1 ring-rose-500/30 hover:ring-rose-400 transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-[0_0_20px_rgba(225,29,72,0.6)]"
+                                    title="Delete Task"
+                                  >
+                                    <Trash2 className="w-3 h-3" /> <span className="hidden lg:inline">Delete</span>
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   )}
                 </div>
               </div>
@@ -603,6 +784,44 @@ export default function DashboardPage() {
         onCreate={createTask}
         onUpdate={handleEditSave}
       />
+      <Dialog
+        open={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        slotProps={{
+          paper: {
+            sx: {
+              bgcolor: '#0b1c3e',
+              color: '#e2e8f0',
+              border: '1px solid rgba(148,163,184,0.22)',
+              borderRadius: '14px',
+            },
+          },
+        }}
+      >
+        <DialogTitle sx={{ fontWeight: 700 }}>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ color: '#94a3b8' }}>
+            Are you sure you want to delete this task? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setDeleteTarget(null)} sx={{ color: '#cbd5e1' }}>
+            Cancel
+          </Button>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={() => {
+              if (deleteTarget) {
+                deleteTask(deleteTarget.id);
+                setDeleteTarget(null);
+              }
+            }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

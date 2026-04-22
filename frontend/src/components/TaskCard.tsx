@@ -30,7 +30,7 @@ export default function TaskCard({ task, onToggle, onDelete, onEdit, index }: Ta
         duration: 0.5, 
         ease: [0.16, 1, 0.3, 1] 
       }}
-      className={`glass-card p-6 flex flex-col sm:flex-row items-start sm:items-center gap-5 transition-all duration-500 group relative overflow-hidden
+      className={`glass-card p-8 flex flex-col sm:flex-row items-start xl:items-center gap-6 transition-all duration-500 group relative overflow-hidden
         ${task.isCompleted ? 'bg-white/[0.01] border-white/5' : 'hover:bg-white/[0.03]'}
       `}
     >
@@ -77,10 +77,11 @@ export default function TaskCard({ task, onToggle, onDelete, onEdit, index }: Ta
       {/* Content Section */}
       <div className="flex-1 min-w-0">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2">
-          <h4 className={`text-lg font-bold font-display transition-all duration-500
+          <h4 className={`text-lg font-bold font-display transition-all duration-500 flex items-center flex-wrap gap-2
             ${task.isCompleted ? 'text-slate-500 line-through decoration-slate-700' : 'text-slate-100'}`}
           >
-            {task.title}
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500/80 no-underline">Task Name:</span>
+            <span>{task.title}</span>
           </h4>
           
           <div className="flex items-center gap-2">
@@ -99,11 +100,13 @@ export default function TaskCard({ task, onToggle, onDelete, onEdit, index }: Ta
         </div>
 
         {task.description && (
-          <p className={`text-sm leading-relaxed mb-4 max-w-2xl transition-colors
-            ${task.isCompleted ? 'text-slate-600' : 'text-slate-400'}`}
-          >
-            {task.description}
-          </p>
+          <div className="bg-slate-900/40 border border-slate-700/50 rounded-xl p-4 mb-4 max-w-2xl shadow-inner backdrop-blur-sm">
+            <p className={`text-sm leading-relaxed transition-colors
+              ${task.isCompleted ? 'text-slate-500' : 'text-slate-300'}`}
+            >
+              {task.description}
+            </p>
+          </div>
         )}
 
         <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
@@ -129,36 +132,36 @@ export default function TaskCard({ task, onToggle, onDelete, onEdit, index }: Ta
       </div>
 
       {/* Action Suite */}
-      <div className="flex items-center gap-2 mt-4 sm:mt-0 ml-auto">
+      <div className="flex flex-wrap items-center gap-3 mt-6 sm:mt-0 ml-auto self-end sm:self-center">
         {/* Explicit Status Toggle Button */}
         <button
           onClick={() => onToggle(task.id, !task.isCompleted)}
-          className={`h-10 px-4 rounded-xl flex items-center gap-2 text-xs font-black uppercase tracking-widest transition-all border
+          className={`h-10 px-5 rounded-xl flex items-center gap-2 text-xs font-bold uppercase tracking-widest transition-all border shadow-lg
             ${task.isCompleted 
-              ? 'bg-slate-800/50 text-slate-400 border-slate-700 hover:bg-slate-700 hover:text-white' 
-              : 'bg-purple-500 text-white border-purple-400 hover:bg-purple-600 shadow-lg shadow-purple-500/25'}
+              ? 'bg-slate-800/80 text-slate-300 border-slate-600 hover:bg-slate-700 hover:text-white hover:border-slate-500 hover:shadow-slate-700/25' 
+              : 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white border-purple-400/50 hover:from-purple-400 hover:to-indigo-500 shadow-purple-500/30 hover:shadow-purple-500/50'}
           `}
         >
           {task.isCompleted ? (
-            <><RefreshCw className="w-3.5 h-3.5" /> Reopen</>
+            <><RefreshCw className="w-4 h-4" /> Reopen Task</>
           ) : (
-            <><CheckCircle2 className="w-3.5 h-3.5" /> Complete</>
+            <><CheckCircle2 className="w-4 h-4" /> Complete Task</>
           )}
         </button>
 
         <button
           onClick={() => onEdit(task)}
-          className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+          className="h-10 px-4 rounded-xl flex items-center gap-2 text-xs font-bold uppercase tracking-widest bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500 hover:text-white transition-all shadow-lg hover:shadow-blue-500/25"
           title="Edit Details"
         >
-          <Pencil className="w-4 h-4" />
+          <Pencil className="w-4 h-4" /> <span className="hidden sm:inline">Edit</span>
         </button>
         <button
           onClick={() => onDelete(task.id)}
-          className="w-10 h-10 rounded-xl flex items-center justify-center bg-rose-500/5 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
+          className="h-10 px-4 rounded-xl flex items-center gap-2 text-xs font-bold uppercase tracking-widest bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all shadow-lg hover:shadow-rose-500/25"
           title="Delete Task"
         >
-          <Trash2 className="w-4 h-4" />
+          <Trash2 className="w-4 h-4" /> <span className="hidden sm:inline">Delete</span>
         </button>
       </div>
     </motion.div>
