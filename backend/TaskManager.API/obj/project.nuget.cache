@@ -1,0 +1,71 @@
+{
+  "version": 2,
+  "dgSpecHash": "+XQgHYj6LrU=",
+  "success": true,
+  "projectFilePath": "E:\\interview project\\task-manager\\backend\\TaskManager.API\\TaskManager.API.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\thisa\\.nuget\\packages\\firebaseadmin\\3.5.0\\firebaseadmin.3.5.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\google.api.gax\\4.13.1\\google.api.gax.4.13.1.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\google.api.gax.rest\\4.13.1\\google.api.gax.rest.4.13.1.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\google.apis\\1.73.0\\google.apis.1.73.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\google.apis.auth\\1.73.0\\google.apis.auth.1.73.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\google.apis.core\\1.73.0\\google.apis.core.1.73.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.aspnetcore.cors\\2.3.9\\microsoft.aspnetcore.cors.2.3.9.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.2\\microsoft.aspnetcore.openapi.10.0.2.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.build.framework\\18.0.2\\microsoft.build.framework.18.0.2.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.11.0\\microsoft.codeanalysis.analyzers.3.11.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.codeanalysis.common\\5.0.0\\microsoft.codeanalysis.common.5.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.codeanalysis.csharp\\5.0.0\\microsoft.codeanalysis.csharp.5.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.codeanalysis.csharp.workspaces\\5.0.0\\microsoft.codeanalysis.csharp.workspaces.5.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.codeanalysis.workspaces.common\\5.0.0\\microsoft.codeanalysis.workspaces.common.5.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.codeanalysis.workspaces.msbuild\\5.0.0\\microsoft.codeanalysis.workspaces.msbuild.5.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.entityframeworkcore\\10.0.7\\microsoft.entityframeworkcore.10.0.7.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\10.0.7\\microsoft.entityframeworkcore.abstractions.10.0.7.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\10.0.7\\microsoft.entityframeworkcore.analyzers.10.0.7.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.entityframeworkcore.design\\10.0.7\\microsoft.entityframeworkcore.design.10.0.7.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\10.0.7\\microsoft.entityframeworkcore.relational.10.0.7.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.extensions.dependencymodel\\10.0.7\\microsoft.extensions.dependencymodel.10.0.7.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\microsoft.visualstudio.solutionpersistence\\1.0.52\\microsoft.visualstudio.solutionpersistence.1.0.52.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\mono.texttemplating\\3.0.0\\mono.texttemplating.3.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\mysqlconnector\\2.4.0\\mysqlconnector.2.4.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\newtonsoft.json\\13.0.4\\newtonsoft.json.13.0.4.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\pomelo.entityframeworkcore.mysql\\9.0.0\\pomelo.entityframeworkcore.mysql.9.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\system.codedom\\7.0.0\\system.codedom.7.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\system.composition\\9.0.0\\system.composition.9.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\system.composition.attributedmodel\\9.0.0\\system.composition.attributedmodel.9.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\system.composition.convention\\9.0.0\\system.composition.convention.9.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\system.composition.hosting\\9.0.0\\system.composition.hosting.9.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\system.composition.runtime\\9.0.0\\system.composition.runtime.9.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\system.composition.typedparts\\9.0.0\\system.composition.typedparts.9.0.0.nupkg.sha512",
+    "C:\\Users\\thisa\\.nuget\\packages\\system.management\\7.0.2\\system.management.7.0.2.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1510",
+      "level": "Warning",
+      "message": "PackageReference Microsoft.AspNetCore.Cors will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "projectPath": "E:\\interview project\\task-manager\\backend\\TaskManager.API\\TaskManager.API.csproj",
+      "warningLevel": 1,
+      "filePath": "E:\\interview project\\task-manager\\backend\\TaskManager.API\\TaskManager.API.csproj",
+      "libraryId": "Microsoft.AspNetCore.Cors",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    },
+    {
+      "code": "NU1608",
+      "level": "Warning",
+      "message": "Detected package version outside of dependency constraint: Pomelo.EntityFrameworkCore.MySql 9.0.0 requires Microsoft.EntityFrameworkCore.Relational (>= 9.0.0 && <= 9.0.999) but version Microsoft.EntityFrameworkCore.Relational 10.0.7 was resolved.",
+      "projectPath": "E:\\interview project\\task-manager\\backend\\TaskManager.API\\TaskManager.API.csproj",
+      "warningLevel": 1,
+      "filePath": "E:\\interview project\\task-manager\\backend\\TaskManager.API\\TaskManager.API.csproj",
+      "libraryId": "Microsoft.EntityFrameworkCore.Relational",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
+}
