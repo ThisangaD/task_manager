@@ -9,13 +9,14 @@ import {
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import toast from 'react-hot-toast';
-import { CheckCircle2, Mail, Lock, ArrowRight, Loader2, ShieldCheck, Sparkles, Zap } from 'lucide-react';
+import { CheckCircle2, Mail, Lock, ArrowRight, Loader2, ShieldCheck, Sparkles, Zap, Eye, EyeOff } from 'lucide-react';
 
 export default function AuthPage() {
   const router = useRouter();
   const [mode, setMode]       = useState<'login' | 'register'>('login');
   const [email, setEmail]     = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -107,7 +108,7 @@ export default function AuthPage() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-[440px]"
+          className="w-full max-w-[500px]"
         >
           <div className="glass-card p-8 lg:p-10 shadow-2xl">
             <div className="text-center mb-8">
@@ -161,14 +162,22 @@ export default function AuthPage() {
                 <div className="relative group">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-500 group-focus-within:text-purple-400 transition-colors" />
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="input-field pl-12"
+                    className="input-field pl-12 pr-12"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
+                  </button>
                 </div>
               </div>
 
