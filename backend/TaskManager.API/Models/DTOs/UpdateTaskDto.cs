@@ -16,5 +16,10 @@ namespace TaskManager.API.Models.DTOs
 
         /// <summary>If provided, updates the completion status of the task.</summary>
         public bool? IsCompleted { get; set; }
+
+        [MaxLength(20)]
+        public string? Priority { get; set; }
+
+        public DateTime? DueDate { get; set; }
     }
 }

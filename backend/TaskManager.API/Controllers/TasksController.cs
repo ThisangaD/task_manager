@@ -77,6 +77,8 @@ namespace TaskManager.API.Controllers
             {
                 Title       = dto.Title.Trim(),
                 Description = dto.Description?.Trim(),
+                Priority    = dto.Priority.Trim(),
+                DueDate     = dto.DueDate,
                 IsCompleted = false,
                 UserId      = userId,
                 CreatedAt   = DateTime.UtcNow,
@@ -113,6 +115,8 @@ namespace TaskManager.API.Controllers
             if (dto.Title != null)       task.Title       = dto.Title.Trim();
             if (dto.Description != null) task.Description = dto.Description?.Trim();
             if (dto.IsCompleted != null) task.IsCompleted = dto.IsCompleted.Value;
+            if (dto.Priority != null)    task.Priority    = dto.Priority.Trim();
+            if (dto.DueDate != null)     task.DueDate     = dto.DueDate;
 
             task.UpdatedAt = DateTime.UtcNow;
 

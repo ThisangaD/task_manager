@@ -29,6 +29,14 @@ namespace TaskManager.API.Models
         [MaxLength(128)]
         public string UserId { get; set; } = string.Empty;
 
+        /// <summary>Task priority level: Low, Medium, High.</summary>
+        [Required]
+        [MaxLength(20)]
+        public string Priority { get; set; } = "Medium";
+
+        /// <summary>Optional deadline for the task.</summary>
+        public DateTime? DueDate { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

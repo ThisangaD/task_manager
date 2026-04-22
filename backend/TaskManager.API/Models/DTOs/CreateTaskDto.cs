@@ -14,5 +14,11 @@ namespace TaskManager.API.Models.DTOs
 
         [MaxLength(2000)]
         public string? Description { get; set; }
+
+        [Required]
+        [MaxLength(20)]
+        public string Priority { get; set; } = "Medium";
+
+        public DateTime? DueDate { get; set; }
     }
 }

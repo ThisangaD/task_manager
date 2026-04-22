@@ -7,10 +7,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { useTasks } from '@/hooks/useTasks';
 import TaskCard from '@/components/TaskCard';
 import AddTaskModal from '@/components/AddTaskModal';
-import { Task, TaskFilter } from '@/types';
+import { Task, TaskFilter, Priority } from '@/types';
 import { 
   Plus, LogOut, CheckCircle2, Loader2, ListChecks, 
-  Clock, LayoutDashboard, User as UserIcon, Calendar as CalendarIcon, TrendingUp, Search, Bell, Sparkles, Pencil,
+  Clock, LayoutDashboard, Calendar as CalendarIcon, TrendingUp, Search, AlertTriangle, Sparkles,
   Moon, Sun, Menu, X
 } from 'lucide-react';
 import Calendar from 'react-calendar';
@@ -94,7 +94,9 @@ const calendarStyles = `
 export default function DashboardPage() {
   const router = useRouter();
   const { user, loading: authLoading, logout, updateDisplayName } = useAuth();
-  const [filter, setFilter] = useState<TaskFilter>('all');
+  const [statusFilter, setStatusFilter] = useState<TaskFilter>('all');
+  const [priorityFilter, setPriorityFilter] = useState<'all' | Priority>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
   
@@ -122,7 +124,7 @@ export default function DashboardPage() {
     return () => clearInterval(timer);
   }, []);
 
-  const { tasks, loading, createTask, toggleTask, updateTask, deleteTask } = useTasks(filter);
+  const { tasks, loading, createTask, toggleTask, updateTask, deleteTask } = useTasks('all');
 
   useEffect(() => {
     if (!authLoading && !user) router.replace('/auth');
@@ -139,7 +141,15 @@ export default function DashboardPage() {
   }
 
   const completedCount = tasks.filter(t => t.isCompleted).length;
-  const pendingCount   = tasks.filter(t => !t.isCompleted).length;
+  const pendingCount = tasks.filter(t => !t.isCompleted).length;
+  const totalCount = tasks.length;
+  const now = new Date();
+  const needsAttentionCount = tasks.filter((task) => {
+    if (task.isCompleted || !task.dueDate) return false;
+    const due = new Date(task.dueDate);
+    const daysUntilDue = (due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+    return daysUntilDue <= 2;
+  }).length;
 
   const handleEditSave = async (id: number, payload: Partial<Task>) => {
     await updateTask(id, payload);
@@ -160,11 +170,24 @@ export default function DashboardPage() {
     return 'Good evening';
   };
 
-  const filterTabs: { key: TaskFilter; label: string; icon: React.ReactNode }[] = [
-    { key: 'all',       label: 'Overview',  icon: <LayoutDashboard className="w-4 h-4" /> },
-    { key: 'pending',   label: 'In Progress',icon: <Clock className="w-4 h-4" /> },
-    { key: 'completed', label: 'Completed',  icon: <ListChecks className="w-4 h-4" /> },
-  ];
+  const filteredTasks = tasks.filter((task) => {
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'pending' && !task.isCompleted) ||
+      (statusFilter === 'completed' && task.isCompleted);
+
+    const matchesPriority =
+      priorityFilter === 'all' ||
+      (task.priority || 'Medium') === priorityFilter;
+
+    const query = searchQuery.trim().toLowerCase();
+    const matchesSearch =
+      query.length === 0 ||
+      task.title.toLowerCase().includes(query) ||
+      (task.description || '').toLowerCase().includes(query);
+
+    return matchesStatus && matchesPriority && matchesSearch;
+  });
 
   const displayName = user?.displayName || user?.email?.split('@')[0] || 'User';
 
@@ -399,87 +422,136 @@ export default function DashboardPage() {
           <div className="min-h-full flex flex-col items-center justify-center py-10 px-4 sm:px-8">
             {/* Main Container Card */}
             <div 
-              className="w-full max-w-[900px] rounded-[32px] overflow-hidden"
+              className="w-full max-w-[980px] rounded-[36px] overflow-hidden"
               style={{
-                background: 'rgba(255, 255, 255, 0.02)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
-                boxShadow: '0 32px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.05)',
-                padding: '40px',
+                background: 'linear-gradient(155deg, #11244A 0%, #0B1C3E 24%, #061831 48%, #051024 74%, #030A1C 100%)',
+                backdropFilter: 'blur(24px)',
+                border: '1px solid rgba(148, 163, 184, 0.18)',
+                boxShadow: '0 36px 90px rgba(3, 10, 28, 0.72), inset 0 1px 0 rgba(148, 163, 184, 0.14)',
+                padding: 'clamp(24px, 4vw, 44px)',
               }}
             >
 
               {/* Header Action Row */}
-              <div className="flex items-center justify-between mb-10">
+              <div className="mb-8 flex items-center justify-between">
                 <div>
                   <h2 className="text-3xl font-black text-white tracking-tight">Active Workflow</h2>
-                  <p className="text-sm font-bold text-slate-500 mt-1">Manage and track your operational objectives.</p>
+                  <p className="text-sm font-bold text-slate-500 mt-1">Track and manage your tasks from one place.</p>
                 </div>
-                <div className="flex items-center gap-4">
-                  <button 
-                    onClick={() => { setEditTask(null); setIsModalOpen(true); }}
-                    className="btn-primary flex items-center gap-3 px-8 shadow-2xl shadow-purple-600/20 active:scale-95 transition-transform"
-                  >
-                    <Plus className="w-6 h-6" />
-                    <span className="font-bold">New Mission</span>
-                  </button>
-                </div>
+                <button
+                  onClick={() => { setEditTask(null); setIsModalOpen(true); }}
+                  className="btn-primary flex items-center gap-2.5 px-6 py-3 shadow-xl shadow-purple-600/20 active:scale-95 transition-transform"
+                >
+                  <Plus className="w-5 h-5" />
+                  <span className="font-bold">New Mission</span>
+                </button>
               </div>
 
               {/* Status Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 {[
-                  { label: 'Total Managed', value: tasks.length,    color: 'purple',  icon: <LayoutDashboard className="w-5 h-5" />, trend: 'Healthy'   },
-                  { label: 'In Progress',   value: pendingCount,    color: 'amber',   icon: <Clock className="w-5 h-5" />,          trend: 'Attention' },
-                  { label: 'Accomplished',  value: completedCount,  color: 'emerald', icon: <TrendingUp className="w-5 h-5" />,     trend: 'Growth'    },
-                ].map((stat, i) => (
-                  <motion.div
+                  {
+                    label: 'Total',
+                    value: totalCount,
+                    icon: <LayoutDashboard className="w-5 h-5" />,
+                    card: 'bg-gradient-to-b from-[#1E3A70]/80 to-[#132A56]/70 border-[#7CA3E8]/25',
+                    iconWrap: 'text-blue-200 bg-[#3C6EC0]/25',
+                  },
+                  {
+                    label: 'Needs Attention',
+                    value: needsAttentionCount,
+                    icon: <AlertTriangle className="w-5 h-5" />,
+                    card: 'bg-gradient-to-b from-[#4A3A18]/78 to-[#35290F]/68 border-[#F2C96A]/28',
+                    iconWrap: 'text-amber-200 bg-[#B98726]/28',
+                  },
+                  {
+                    label: 'In Progress',
+                    value: pendingCount,
+                    icon: <Clock className="w-5 h-5" />,
+                    card: 'bg-gradient-to-b from-[#2A2854]/78 to-[#1D1C3B]/68 border-[#A8A0FF]/26',
+                    iconWrap: 'text-violet-200 bg-[#5D58C9]/28',
+                  },
+                  {
+                    label: 'Completed',
+                    value: completedCount,
+                    icon: <ListChecks className="w-5 h-5" />,
+                    card: 'bg-gradient-to-b from-[#163F35]/78 to-[#102F28]/68 border-[#74D4B4]/28',
+                    iconWrap: 'text-emerald-200 bg-[#2F9D7A]/28',
+                  },
+                ].map((stat) => (
+                  <div
                     key={stat.label}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                    className="glass-card p-6 border-white/5 hover:border-white/10 transition-colors"
-                    style={{ background: 'rgba(255, 255, 255, 0.02)' }}
+                    className={`rounded-[24px] border p-5 shadow-[0_10px_30px_rgba(0,0,0,0.22)] backdrop-blur-sm transition-all hover:-translate-y-0.5 ${stat.card}`}
                   >
-                    <div className="flex items-center justify-between mb-4">
-                      <div className={`w-10 h-10 rounded-xl bg-${stat.color}-500/10 flex items-center justify-center text-${stat.color}-400 ring-1 ring-${stat.color}-500/20`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className={`w-11 h-11 rounded-2xl flex items-center justify-center ${stat.iconWrap}`}>
                         {stat.icon}
-                      </div>
-                      <span className={`text-[10px] font-black tracking-widest uppercase px-2 py-1 rounded-md bg-${stat.color}-500/5 text-${stat.color}-400`}>
-                        {stat.trend}
                       </span>
+                      <span className="text-3xl font-black text-white leading-none">{stat.value}</span>
                     </div>
-                    <p className="text-3xl font-black text-white leading-none mb-1">{stat.value}</p>
-                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">{stat.label}</p>
-                  </motion.div>
+                    <p className="text-[11px] font-black text-slate-200 uppercase tracking-widest">{stat.label}</p>
+                  </div>
                 ))}
+              </div>
+
+              {/* Task List Header */}
+              <div className="mb-4 flex items-center justify-between">
+                <div className="inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-purple-300">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Task List
+                </div>
+                <p className="text-xs font-semibold text-slate-500">{filteredTasks.length} result{filteredTasks.length === 1 ? '' : 's'}</p>
               </div>
 
               {/* Task Filtering & Content */}
               <div className="space-y-8">
-                <div className="flex bg-white/[0.03] rounded-2xl p-1 overflow-x-auto no-scrollbar border border-white/5 inline-flex">
-                  <div className="flex min-w-max">
-                    {filterTabs.map(tab => (
-                      <button
-                        key={tab.key}
-                        onClick={() => setFilter(tab.key)}
-                        className={`flex items-center gap-3 px-8 py-3 rounded-2xl text-sm font-black tracking-widest uppercase transition-all duration-500 relative ${
-                          filter === tab.key ? 'text-white' : 'text-slate-500 hover:text-slate-300'
-                        }`}
-                      >
-                        {filter === tab.key && (
-                          <motion.div 
-                            layoutId="activeFilter"
-                            className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl shadow-xl shadow-purple-600/30"
-                          />
-                        )}
-                        <div className="relative z-10 flex items-center gap-2.5">
-                          {tab.icon}
-                          <span>{tab.label}</span>
-                        </div>
-                      </button>
-                    ))}
+                <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                    <div className="relative lg:col-span-1">
+                      <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search tasks by title or description"
+                        className="w-full rounded-xl border border-white/10 bg-white/[0.03] pl-9 pr-3 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none focus:border-purple-500/50"
+                      />
+                    </div>
+
+                    <div className="flex bg-white/[0.03] rounded-xl p-1 overflow-x-auto no-scrollbar border border-white/10">
+                      {[
+                        { key: 'all', label: 'All' },
+                        { key: 'pending', label: 'In Progress' },
+                        { key: 'completed', label: 'Completed' },
+                      ].map((tab) => (
+                        <button
+                          key={tab.key}
+                          onClick={() => setStatusFilter(tab.key as TaskFilter)}
+                          className={`flex-1 whitespace-nowrap px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${
+                            statusFilter === tab.key
+                              ? 'bg-purple-600 text-white'
+                              : 'text-slate-400 hover:text-slate-200'
+                          }`}
+                        >
+                          {tab.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="flex bg-white/[0.03] rounded-xl p-1 overflow-x-auto no-scrollbar border border-white/10">
+                      {(['all', 'Low', 'Medium', 'High'] as const).map((p) => (
+                        <button
+                          key={p}
+                          onClick={() => setPriorityFilter(p)}
+                          className={`flex-1 whitespace-nowrap px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${
+                            priorityFilter === p
+                              ? 'bg-indigo-600 text-white'
+                              : 'text-slate-400 hover:text-slate-200'
+                          }`}
+                        >
+                          {p === 'all' ? 'All Priority' : p}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -489,20 +561,20 @@ export default function DashboardPage() {
                       <Loader2 className="w-10 h-10 text-purple-500 animate-spin" />
                       <p className="mt-8 text-slate-500 font-bold uppercase tracking-[0.3em] text-xs">Synchronizing Workspace</p>
                     </div>
-                  ) : tasks.length === 0 ? (
+                  ) : filteredTasks.length === 0 ? (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className="text-center py-32 bg-white/[0.01] rounded-[40px] border border-dashed border-white/5"
                     >
                       <CheckCircle2 className="w-12 h-12 text-slate-700 mx-auto mb-6" />
-                      <h3 className="text-xl font-black text-white mb-2">Zero Missions</h3>
-                      <p className="text-slate-500 text-sm max-w-[240px] mx-auto">No objectives found. Start your journey by creating a new task.</p>
+                      <h3 className="text-xl font-black text-white mb-2">No Matching Tasks</h3>
+                      <p className="text-slate-500 text-sm max-w-[260px] mx-auto">Try changing search text or filters to see more tasks.</p>
                     </motion.div>
                   ) : (
                     <AnimatePresence mode="popLayout" initial={false}>
                       <div className="grid grid-cols-1 gap-4">
-                        {tasks.map((task, index) => (
+                        {filteredTasks.map((task, index) => (
                           <TaskCard
                             key={task.id}
                             task={task}

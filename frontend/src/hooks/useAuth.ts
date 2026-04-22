@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, onAuthStateChanged, signOut } from 'firebase/auth';
+import { User, onAuthStateChanged, signOut, updateProfile } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
 /**
@@ -23,5 +23,13 @@ export function useAuth() {
 
   const logout = () => signOut(auth);
 
-  return { user, loading, logout };
+  /** Updates the user's display name and refreshes the local user state */
+  const updateDisplayName = async (name: string) => {
+    if (!auth.currentUser) return;
+    await updateProfile(auth.currentUser, { displayName: name });
+    // Force a local state refresh by cloning the user object
+    setUser({ ...auth.currentUser });
+  };
+
+  return { user, loading, logout, updateDisplayName };
 }
