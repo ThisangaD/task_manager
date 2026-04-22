@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-syne:    'Syne', sans-serif;
+  --font-dm-sans: 'DM Sans', sans-serif;
+}
+
+@layer base {
+  * { box-sizing: border-box; }
+
+  body {
+    background-color: #0A0A0F;
+    color: #E2E8F0;
+    font-family: var(--font-dm-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #111118; }
+  ::-webkit-scrollbar-thumb { background: #7C3AED; border-radius: 3px; }
+}
+
+@layer components {
+  /* Glass card effect */
+  .glass-card {
+    background: rgba(26, 26, 36, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(124, 58, 237, 0.15);
+    border-radius: 16px;
+  }
+
+  /* Gradient button */
+  .btn-primary {
+    background: linear-gradient(135deg, #7C3AED, #06B6D4);
+    color: white;
+    font-weight: 600;
+    padding: 0.625rem 1.5rem;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+  }
+
+  .btn-primary:active { transform: translateY(0); }
+
+  /* Input field */
+  .input-field {
+    background: rgba(26, 26, 36, 0.8);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    color: #E2E8F0;
+    width: 100%;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    font-family: var(--font-dm-sans);
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: #7C3AED;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+  }
+
+  .input-field::placeholder { color: #4A5568; }
+}
