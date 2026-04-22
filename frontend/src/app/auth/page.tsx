@@ -48,7 +48,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#030303] relative overflow-hidden font-body px-4">
+    <div className="aurora-bg min-h-screen flex items-center justify-center relative overflow-hidden font-body px-4">
       {/* Dynamic Background Blobs */}
       <div className="bg-blob bg-brand-purple w-[500px] h-[500px] -top-20 -left-20" />
       <div className="bg-blob bg-brand-secondary w-[400px] h-[400px] -bottom-20 -right-20" style={{ animationDelay: '-10s' }} />
