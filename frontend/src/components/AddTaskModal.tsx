@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Task, CreateTaskPayload } from '@/types';
-import { X, Loader2 } from 'lucide-react';
+import { X, Loader2, Sparkles, PlusCircle, CheckCircle2 } from 'lucide-react';
 
 interface AddTaskModalProps {
   isOpen: boolean;
@@ -32,80 +32,107 @@ export default function AddTaskModal({ isOpen, editTask, onClose, onCreate, onUp
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!title.trim()) return;
+    
     setLoading(true);
-
     if (editTask) {
       await onUpdate(editTask.id, { title, description });
     } else {
       await onCreate({ title, description });
     }
-
     setLoading(false);
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#030303]/80 backdrop-blur-md">
+          {/* Modal Overlay backdrop click to close */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0"
+          />
+
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.9, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.2 }}
-            className="glass-card w-full max-w-md p-6 relative"
+            exit={{ opacity: 0, scale: 0.9, y: 30 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="glass-card w-full max-w-[500px] p-8 relative overflow-hidden shadow-2xl border-white/10"
           >
+            {/* Background Gradient flair */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-600 via-indigo-400 to-cyan-500" />
+            
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+              className="absolute top-6 right-6 w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/5 transition-all"
             >
               <X className="w-5 h-5" />
             </button>
             
-            <h2 className="text-xl font-bold font-display text-white mb-6">
-              {editTask ? 'Edit Task' : 'New Task'}
-            </h2>
+            <div className="flex items-center gap-3 mb-8">
+               <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 border border-purple-500/20">
+                 {editTask ? <Sparkles className="w-5 h-5" /> : <PlusCircle className="w-5 h-5" />}
+               </div>
+               <div>
+                 <h2 className="text-2xl font-bold font-display text-white">
+                   {editTask ? 'Edit Objective' : 'New Objective'}
+                 </h2>
+                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mt-0.5">
+                   {editTask ? 'Modify existing task details' : 'Define a new focus area'}
+                 </p>
+               </div>
+            </div>
             
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Title</label>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Title</label>
                 <input
                   type="text"
                   required
                   value={title}
                   onChange={e => setTitle(e.target.value)}
-                  className="input-field"
-                  placeholder="Task title..."
+                  className="input-field text-base font-bold"
+                  placeholder="What needs to be done?"
                   autoFocus
                 />
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Description (optional)</label>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Additional Context</label>
                 <textarea
                   value={description}
                   onChange={e => setDescription(e.target.value)}
-                  className="input-field min-h-[100px] resize-y"
-                  placeholder="Add details..."
+                  className="input-field min-h-[140px] resize-none text-sm leading-relaxed"
+                  placeholder="Specify details, links, or sub-tasks..."
                 />
               </div>
               
-              <div className="flex justify-end gap-3 pt-2">
+              <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-8">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-surface-800 transition-colors"
+                  className="px-6 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:text-white hover:bg-white/5 transition-all"
                 >
-                  Cancel
+                  Discard
                 </button>
                 <button
                   type="submit"
                   disabled={loading || !title.trim()}
-                  className="btn-primary min-w-[100px] flex justify-center items-center gap-2 text-sm"
+                  className="btn-primary min-w-[160px] flex justify-center items-center gap-2.5"
                 >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : editTask ? 'Save Changes' : 'Create Task'}
+                  {loading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      <span className="font-bold">{editTask ? 'Apply Changes' : 'Initialize Task'}</span>
+                      <CheckCircle2 className="w-5 h-5" />
+                    </>
+                  )}
                 </button>
               </div>
             </form>

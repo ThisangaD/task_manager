@@ -1,92 +1,135 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Task } from '@/types';
-import { Check, Trash2, Pencil } from 'lucide-react';
+import { Check, Trash2, Pencil, Calendar, Circle, CheckCircle2, ChevronRight } from 'lucide-react';
 
 interface TaskCardProps {
   task: Task;
   onToggle:  (id: number, isCompleted: boolean) => void;
   onDelete:  (id: number) => void;
   onEdit:    (task: Task) => void;
-  index:     number; // Used for staggered animation delay
+  index:     number;
 }
 
-/**
- * Individual task card with hover-reveal action buttons and
- * a smooth completion animation using Framer Motion.
- */
 export default function TaskCard({ task, onToggle, onDelete, onEdit, index }: TaskCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
+  // Generate a mock priority for UI flair
+  const priorities = ['High', 'Medium', 'Low'];
+  const priority = priorities[task.id % 3]; // Deterministic mock priority
+
   return (
     <motion.div
-      layout                              // Animate position changes
-      initial={{ opacity: 0, y: 20 }}
+      layout
+      initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ delay: index * 0.05, duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      exit={{ opacity: 0, scale: 0.98 }}
+      transition={{ 
+        delay: index * 0.04, 
+        duration: 0.4, 
+        ease: [0.16, 1, 0.3, 1] 
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`glass-card p-4 flex items-start gap-4 group transition-all duration-300 cursor-default
-        ${task.isCompleted ? 'opacity-60' : ''}
-        ${isHovered ? 'border-brand-violet/30 shadow-lg shadow-brand-purple/10' : ''}
+      className={`glass-card p-5 flex items-center gap-5 transition-all duration-500 group relative
+        ${task.isCompleted ? 'bg-white/[0.02] border-white/5 opacity-50' : 'hover:bg-white/[0.04]'}
       `}
     >
-      {/* Completion toggle button */}
+      {/* Interactive Completion Ring */}
       <button
         onClick={() => onToggle(task.id, !task.isCompleted)}
-        aria-label={task.isCompleted ? 'Mark as pending' : 'Mark as complete'}
-        className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 mt-0.5
-          ${task.isCompleted
-            ? 'bg-gradient-brand border-transparent'
-            : 'border-slate-600 hover:border-brand-violet'
-          }`}
+        className="relative flex-shrink-0 w-8 h-8 flex items-center justify-center group/btn"
       >
-        {task.isCompleted && (
-          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400 }}>
-            <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
-          </motion.div>
-        )}
+        <AnimatePresence mode="wait">
+          {task.isCompleted ? (
+            <motion.div
+              key="completed"
+              initial={{ scale: 0, rotate: -45 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={{ scale: 0, rotate: 45 }}
+              className="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-400 to-indigo-500 flex items-center justify-center shadow-lg shadow-cyan-500/30"
+            >
+              <Check className="w-4 h-4 text-white" strokeWidth={3} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="pending"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              className="w-7 h-7 rounded-full border-2 border-slate-700 group-hover/btn:border-purple-500 transition-colors flex items-center justify-center"
+            >
+              <div className="w-2 h-2 rounded-full bg-transparent group-hover/btn:bg-purple-500/50 transition-colors" />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </button>
 
-      {/* Task content */}
-      <div className="flex-1 min-w-0">
-        <p className={`font-medium text-sm leading-snug transition-all duration-200
-          ${task.isCompleted ? 'line-through text-slate-500' : 'text-slate-100'}`}
-        >
-          {task.title}
-        </p>
+      {/* Task Information */}
+      <div className="flex-1 min-w-0 pr-4">
+        <div className="flex items-center gap-3 mb-1.5 flex-wrap">
+          <h4 className={`text-base font-bold font-display transition-all duration-500 truncate
+            ${task.isCompleted ? 'text-slate-500 line-through' : 'text-white'}`}
+          >
+            {task.title}
+          </h4>
+          
+          {/* Priority Badge */}
+          {!task.isCompleted && (
+            <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border
+              ${priority === 'High' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 
+                priority === 'Medium' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 
+                'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}
+            `}>
+              {priority}
+            </span>
+          )}
+        </div>
+
         {task.description && (
-          <p className="text-xs text-slate-500 mt-1 line-clamp-2">{task.description}</p>
+          <p className={`text-sm leading-relaxed mb-3 line-clamp-1 transition-colors
+            ${task.isCompleted ? 'text-slate-600' : 'text-slate-400'}`}
+          >
+            {task.description}
+          </p>
         )}
-        <p className="text-xs text-slate-600 mt-2">
-          {new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-        </p>
+
+        <div className="flex items-center gap-4 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+           <span className="flex items-center gap-1.5">
+             <Calendar className="w-3 h-3" />
+             {new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+           </span>
+           <span className="hidden sm:inline opacity-50">•</span>
+           <span className="hidden sm:inline">Ref: #{task.id.toString().padStart(4, '0')}</span>
+        </div>
       </div>
 
-      {/* Action buttons — revealed on hover */}
-      <motion.div
-        animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : 8 }}
-        transition={{ duration: 0.15 }}
-        className="flex items-center gap-1 flex-shrink-0"
-      >
+      {/* Interactive Actions Overlay */}
+      <div className={`flex items-center gap-2 transition-all duration-300
+        ${isHovered ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0 pointer-events-none'}
+      `}>
         <button
           onClick={() => onEdit(task)}
-          aria-label="Edit task"
-          className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-brand-violet hover:bg-brand-purple/10 transition-colors"
+          className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all shadow-sm"
         >
-          <Pencil className="w-3.5 h-3.5" />
+          <Pencil className="w-4 h-4" />
         </button>
         <button
           onClick={() => onDelete(task.id)}
-          aria-label="Delete task"
-          className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+          className="w-10 h-10 rounded-xl flex items-center justify-center bg-red-500/5 border border-red-500/10 text-slate-500 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-all shadow-sm"
         >
-          <Trash2 className="w-3.5 h-3.5" />
+          <Trash2 className="w-4 h-4" />
         </button>
-      </motion.div>
+      </div>
+
+      {/* Decorative arrow icon for completion hint on hover */}
+      {!task.isCompleted && (
+        <div className="absolute right-4 text-slate-800 group-hover:text-purple-500/20 transition-colors pointer-events-none">
+          <ChevronRight className="w-8 h-8" strokeWidth={3} />
+        </div>
+      )}
     </motion.div>
   );
 }
