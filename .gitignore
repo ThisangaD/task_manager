@@ -1,0 +1,17 @@
+# IDEs
+.idea/
+.vscode/
+
+# Backend (ASP.NET Core)
+backend/bin/
+backend/obj/
+backend/*.user
+backend/.env
+backend/appsettings.Development.json
+backend/firebase-service-account.json
+
+# Frontend (Next.js)
+frontend/.env.local
+frontend/.env*.local
+frontend/.next/
+frontend/node_modules/
