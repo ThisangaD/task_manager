@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import { IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { Task, CreateTaskPayload, Priority } from '@/types';
 
 interface AddTaskModalProps {
@@ -85,16 +87,23 @@ export default function AddTaskModal({ isOpen, editTask, onClose, onCreate, onUp
             {/* Top decorative gradient bar */}
             <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#355872] via-[#7AAACE] to-[#9CD5FF]" />
             
-            <button
+            <IconButton
               onClick={onClose}
-              className="absolute top-6 right-6 w-9 h-9 rounded-full flex items-center justify-center text-[#355872]/60 bg-[#355872]/5 hover:text-[#355872] hover:bg-[#355872]/10 hover:scale-105 active:scale-95 transition-all outline-none z-10"
+              sx={{
+                position: 'absolute',
+                top: 16,
+                right: 16,
+                color: '#355872',
+                '&:hover': { backgroundColor: 'rgba(53, 88, 114, 0.08)' },
+                zIndex: 10,
+              }}
             >
-              <X className="w-4 h-4" />
-            </button>
+              <CloseIcon />
+            </IconButton>
             
             <div className="px-8 pt-8 pb-6 border-b border-[#7AAACE]/20 bg-white/40">
               <div className="flex items-center gap-4">
-                <div>
+                <div className="translate-x-[5px]">
                   <h2 className="text-2xl sm:text-3xl font-black text-[#355872] tracking-tight">
                     {editTask ? 'Edit Mission' : 'Create New Mission'}
                   </h2>
