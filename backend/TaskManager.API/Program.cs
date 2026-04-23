@@ -44,10 +44,21 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Initialize Firebase Admin SDK at startup
+Console.WriteLine("[FIREBASE_DEBUG] Checking for environment variables...");
+foreach (System.Collections.DictionaryEntry de in Environment.GetEnvironmentVariables())
+{
+    if (de.Key.ToString()?.StartsWith("FIREBASE_") == true)
+    {
+        Console.WriteLine($"[FIREBASE_DEBUG] Found variable key: {de.Key}");
+    }
+}
+
 var firebaseJson = Environment.GetEnvironmentVariable("FIREBASE_CONFIG_JSON") 
     ?? Environment.GetEnvironmentVariable("FIREBASE_SERVICE_ACCOUNT_JSON")
+    ?? Environment.GetEnvironmentVariable("FIREBASE_JSON")
     ?? builder.Configuration["FIREBASE_CONFIG_JSON"]
-    ?? builder.Configuration["FIREBASE_SERVICE_ACCOUNT_JSON"];
+    ?? builder.Configuration["FIREBASE_SERVICE_ACCOUNT_JSON"]
+    ?? builder.Configuration["FIREBASE_JSON"];
 var serviceAccountPath = builder.Configuration["Firebase:ServiceAccountPath"] ?? "firebase-service-account.json";
 
 FirebaseAuthService.Initialize(serviceAccountPath, firebaseJson);
