@@ -80,7 +80,7 @@ export default function AddTaskModal({ isOpen, editTask, onClose, onCreate, onUp
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 40 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="w-full max-w-[640px] relative overflow-hidden rounded-[28px] bg-[#F7F8F0] shadow-[0_24px_60px_rgba(53,88,114,0.3)] border border-[#7AAACE]/30"
+            className="w-full max-w-[720px] relative overflow-hidden rounded-[28px] bg-[#F7F8F0] shadow-[0_24px_60px_rgba(53,88,114,0.3)] border border-[#7AAACE]/30"
           >
             {/* Top decorative gradient bar */}
             <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#355872] via-[#7AAACE] to-[#9CD5FF]" />
@@ -98,9 +98,11 @@ export default function AddTaskModal({ isOpen, editTask, onClose, onCreate, onUp
                   <h2 className="text-2xl sm:text-3xl font-black text-[#355872] tracking-tight">
                     {editTask ? 'Edit Mission' : 'Create New Mission'}
                   </h2>
-                  <p className="text-sm font-semibold text-[#7AAACE] mt-1">
-                    {editTask ? 'Update objective details and timelines' : 'Set up clear parameters for faster execution'}
-                  </p>
+                  {editTask && (
+                    <p className="text-sm font-semibold text-[#7AAACE] mt-1">
+                      Update objective details and timelines
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
