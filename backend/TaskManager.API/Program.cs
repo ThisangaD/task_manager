@@ -30,7 +30,9 @@ builder.Services.AddCors(options =>
     {
         policy
             .WithOrigins(
-                "http://localhost:3000"         // Local dev
+                "http://localhost:3000",         // Local dev
+                "https://task-manager-frontend-five-ashen.vercel.app", // Adjust this if your URL is different
+                "https://task-manager-phi-topaz.vercel.app"
             )
             .AllowAnyHeader()
             .AllowAnyMethod();
