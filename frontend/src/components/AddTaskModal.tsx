@@ -66,7 +66,7 @@ export default function AddTaskModal({ isOpen, editTask, onClose, onCreate, onUp
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-[#030303]/90 backdrop-blur-md">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-[#355872]/40 backdrop-blur-md">
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -80,25 +80,25 @@ export default function AddTaskModal({ isOpen, editTask, onClose, onCreate, onUp
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 40 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="w-full max-w-[640px] relative overflow-hidden rounded-[28px] bg-gradient-to-b from-[#0E2145] to-[#0A1732] shadow-[0_24px_60px_rgba(0,0,0,0.6)] border border-slate-700/50"
+            className="w-full max-w-[640px] relative overflow-hidden rounded-[28px] bg-[#F7F8F0] shadow-[0_24px_60px_rgba(53,88,114,0.3)] border border-[#7AAACE]/30"
           >
             {/* Top decorative gradient bar */}
-            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-purple-500 via-indigo-500 to-emerald-400" />
+            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#355872] via-[#7AAACE] to-[#9CD5FF]" />
             
             <button
               onClick={onClose}
-              className="absolute top-6 right-6 w-9 h-9 rounded-full flex items-center justify-center text-slate-400 bg-slate-800/50 hover:text-white hover:bg-slate-700 hover:scale-105 active:scale-95 transition-all outline-none ring-2 ring-transparent focus:ring-slate-500 z-10"
+              className="absolute top-6 right-6 w-9 h-9 rounded-full flex items-center justify-center text-[#355872]/60 bg-[#355872]/5 hover:text-[#355872] hover:bg-[#355872]/10 hover:scale-105 active:scale-95 transition-all outline-none z-10"
             >
               <X className="w-4 h-4" />
             </button>
             
-            <div className="px-8 pt-8 pb-6 border-b border-slate-700/50 bg-white/[0.02]">
+            <div className="px-8 pt-8 pb-6 border-b border-[#7AAACE]/20 bg-white/40">
               <div className="flex items-center gap-4">
                 <div>
-                  <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                  <h2 className="text-2xl sm:text-3xl font-black text-[#355872] tracking-tight">
                     {editTask ? 'Edit Mission' : 'Create New Mission'}
                   </h2>
-                  <p className="text-sm font-semibold text-slate-400 mt-1">
+                  <p className="text-sm font-semibold text-[#7AAACE] mt-1">
                     {editTask ? 'Update objective details and timelines' : 'Set up clear parameters for faster execution'}
                   </p>
                 </div>
@@ -107,13 +107,13 @@ export default function AddTaskModal({ isOpen, editTask, onClose, onCreate, onUp
             
             <form onSubmit={handleSubmit} className="px-8 py-8 space-y-7 relative z-10">
               <div className="space-y-2.5">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Mission Title <span className="text-rose-500">*</span></label>
+                <label className="text-xs font-black text-[#355872] uppercase tracking-widest pl-1">Mission Title <span className="text-rose-500">*</span></label>
                 <input
                   type="text"
                   required
                   value={title}
                   onChange={e => setTitle(e.target.value)}
-                  className="w-full bg-[#060F25]/80 border border-slate-700/60 rounded-xl px-5 py-3.5 text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all font-semibold text-base shadow-inner"
+                  className="w-full bg-white border border-[#7AAACE]/40 rounded-xl px-5 py-3.5 text-black placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#7AAACE]/50 focus:border-[#7AAACE]/50 transition-all font-semibold text-base shadow-sm"
                   placeholder="What needs to be accomplished?"
                   autoFocus
                 />
@@ -121,10 +121,10 @@ export default function AddTaskModal({ isOpen, editTask, onClose, onCreate, onUp
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2.5">
-                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">
+                  <label className="text-xs font-black text-[#355872] uppercase tracking-widest pl-1">
                     Priority Level
                   </label>
-                  <div className="flex p-1.5 bg-[#060F25]/80 rounded-xl border border-slate-700/60 shadow-inner gap-1.5">
+                  <div className="flex p-1.5 bg-white rounded-xl border border-[#7AAACE]/40 shadow-sm gap-1.5">
                     {(['Low', 'Medium', 'High'] as Priority[]).map((p) => {
                       const isActive = priority === p;
                       return (
@@ -134,12 +134,8 @@ export default function AddTaskModal({ isOpen, editTask, onClose, onCreate, onUp
                           onClick={() => setPriority(p)}
                           className={`flex-1 py-3 sm:py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all duration-300
                             ${isActive
-                              ? `bg-gradient-to-b shadow-md scale-[1.02] border-transparent ${
-                                  p === 'High' ? 'from-rose-500/20 to-rose-600/10 text-rose-400 ring-1 ring-rose-500/50 shadow-rose-500/20' :
-                                  p === 'Medium' ? 'from-amber-500/20 to-amber-600/10 text-amber-400 ring-1 ring-amber-500/50 shadow-amber-500/20' :
-                                  'from-emerald-500/20 to-emerald-600/10 text-emerald-400 ring-1 ring-emerald-500/50 shadow-emerald-500/20'
-                                }`
-                              : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 border border-transparent'
+                              ? `bg-[#355872] text-white shadow-md scale-[1.02]`
+                              : 'text-[#7AAACE] hover:text-[#355872] hover:bg-[#9CD5FF]/10'
                             }
                           `}
                         >
@@ -151,46 +147,46 @@ export default function AddTaskModal({ isOpen, editTask, onClose, onCreate, onUp
                 </div>
 
                 <div className="space-y-2.5">
-                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">
+                  <label className="text-xs font-black text-[#355872] uppercase tracking-widest pl-1">
                     Target Date
                   </label>
                   <input
                     type="date"
                     value={dueDate}
                     onChange={e => setDueDate(e.target.value)}
-                    className="w-full bg-[#060F25]/80 border border-slate-700/60 rounded-xl px-5 py-3 sm:py-3.5 text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all font-semibold text-sm shadow-inner [&::-webkit-calendar-picker-indicator]:opacity-50 [&::-webkit-calendar-picker-indicator]:hover:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:p-1"
+                    className="w-full bg-white border border-[#7AAACE]/40 rounded-xl px-5 py-3 sm:py-3.5 text-black placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#7AAACE]/50 focus:border-[#7AAACE]/50 transition-all font-semibold text-sm shadow-sm"
                   />
                 </div>
               </div>
               
               <div className="space-y-2.5">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1 flex justify-between">
-                  <span className="flex items-center gap-2">Description / Details</span>
-                  <span className="text-slate-600 text-[10px] font-bold">OPTIONAL</span>
+                <label className="text-xs font-black text-[#355872] uppercase tracking-widest pl-1 flex justify-between">
+                  <span>Description / Details</span>
+                  <span className="text-[#7AAACE] text-[10px] font-bold">OPTIONAL</span>
                 </label>
                 <textarea
                   value={description}
                   onChange={e => setDescription(e.target.value)}
-                  className="w-full bg-[#060F25]/80 border border-slate-700/60 rounded-xl px-5 py-4 text-slate-100 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all font-medium text-sm leading-relaxed min-h-[140px] resize-y shadow-inner"
-                  placeholder="Add technical context, execution criteria, or helpful notes for handoff..."
+                  className="w-full bg-white border border-[#7AAACE]/40 rounded-xl px-5 py-4 text-black placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#7AAACE]/50 focus:border-[#7AAACE]/50 transition-all font-medium text-sm leading-relaxed min-h-[140px] resize-y shadow-sm"
+                  placeholder="Add technical context or execution criteria..."
                 />
               </div>
               
-              <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 sm:gap-4 pt-10 border-t border-slate-700/50">
+              <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 sm:gap-4 pt-10 border-t border-[#7AAACE]/20">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="w-full sm:w-auto px-7 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-slate-400 bg-slate-800/30 border border-slate-700 hover:text-white hover:bg-slate-700 hover:border-slate-500 hover:scale-105 active:scale-95 transition-all"
+                  className="w-full sm:w-auto px-7 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-[#355872] bg-white border border-[#7AAACE]/40 hover:bg-[#F7F8F0] hover:border-[#355872] hover:scale-105 active:scale-95 transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading || !title.trim()}
-                  className={`w-full sm:w-auto px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest flex justify-center items-center gap-2.5 transition-all duration-300 border shadow-lg
+                  className={`w-full sm:w-auto px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest flex justify-center items-center gap-2.5 transition-all duration-300 shadow-lg
                     ${!title.trim() 
-                      ? 'bg-slate-800 border-slate-700 text-slate-500 cursor-not-allowed' 
-                      : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-indigo-400/50 hover:from-indigo-500 hover:to-purple-500 hover:scale-105 active:scale-95 shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:ring-2 ring-indigo-500/30'
+                      ? 'bg-slate-300 text-slate-500 cursor-not-allowed' 
+                      : 'bg-[#355872] text-white hover:bg-[#2A465B] hover:scale-105 active:scale-95 shadow-[#355872]/20'
                     }
                   `}
                 >
