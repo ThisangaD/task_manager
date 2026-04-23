@@ -17,8 +17,15 @@ builder.Services.AddSwaggerGen(c =>
 
 // Register MySQL + EF Core
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrEmpty(connectionString)) {
+    Console.WriteLine("[DB_DEBUG] WARNING: Database connection string is NULL or empty!");
+} else {
+    Console.WriteLine("[DB_DEBUG] Connection string found (length: " + connectionString.Length + ")");
+}
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 30))));
 
 // Register Firebase service as a scoped dependency
 builder.Services.AddScoped<FirebaseAuthService>();
@@ -44,14 +51,16 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Initialize Firebase Admin SDK at startup
-Console.WriteLine("[FIREBASE_DEBUG] Checking for environment variables...");
-foreach (System.Collections.DictionaryEntry de in Environment.GetEnvironmentVariables())
-{
-    if (de.Key.ToString()?.StartsWith("FIREBASE_") == true)
+Console.WriteLine("[FIREBASE_DEBUG] --- STARTING FULL SYSTEM SCAN ---");
+try {
+    foreach (System.Collections.DictionaryEntry de in Environment.GetEnvironmentVariables())
     {
-        Console.WriteLine($"[FIREBASE_DEBUG] Found variable key: {de.Key}");
+        Console.WriteLine($"[FIREBASE_DEBUG] Key Found: {de.Key}");
     }
+} catch (Exception ex) {
+    Console.WriteLine("[FIREBASE_DEBUG] Error scanning variables: " + ex.Message);
 }
+Console.WriteLine("[FIREBASE_DEBUG] --- END OF SYSTEM SCAN ---");
 
 var firebaseJson = Environment.GetEnvironmentVariable("FIREBASE_CONFIG_JSON") 
     ?? Environment.GetEnvironmentVariable("FIREBASE_SERVICE_ACCOUNT_JSON")
