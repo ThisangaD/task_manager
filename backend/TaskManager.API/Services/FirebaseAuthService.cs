@@ -23,18 +23,18 @@ namespace TaskManager.API.Services
         /// </summary>
         public static void Initialize(string? serviceAccountPath = null, string? jsonContent = null)
         {
-            if (FirebaseApp.DefaultInstance != null) return; // Prevent double-initialization
+            if (FirebaseApp.DefaultInstance != null) return; 
 
             GoogleCredential credential;
 
             if (!string.IsNullOrEmpty(jsonContent))
             {
-                // Initialize from raw JSON string (ideal for production environment variables)
+                Console.WriteLine("[FIREBASE_DEBUG] Initializing from environment variable JSON.");
                 credential = GoogleCredential.FromJson(jsonContent);
             }
             else
             {
-                // Fallback to local file paths (ideal for local development)
+                Console.WriteLine("[FIREBASE_DEBUG] No JSON environment variable found. Falling back to file: " + (serviceAccountPath ?? "firebase-service-account.json"));
                 credential = GoogleCredential.FromFile(serviceAccountPath ?? "firebase-service-account.json");
             }
 
@@ -42,6 +42,7 @@ namespace TaskManager.API.Services
             {
                 Credential = credential
             });
+            Console.WriteLine("[FIREBASE_DEBUG] SDK Initialized successfully.");
         }
 
         /// <summary>
