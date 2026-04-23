@@ -8,7 +8,7 @@ backend/obj/
 backend/*.user
 backend/.env
 backend/appsettings.Development.json
-backend/firebase-service-account.json
+# backend/firebase-service-account.json (Removed from ignore for deployment)
 
 # Frontend (Next.js)
 frontend/.env.local

@@ -44,9 +44,10 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Initialize Firebase Admin SDK at startup
-var serviceAccountPath = builder.Configuration["Firebase:ServiceAccountPath"]
-    ?? "firebase-service-account.json";
-FirebaseAuthService.Initialize(serviceAccountPath);
+var firebaseJson = builder.Configuration["FIREBASE_CONFIG_JSON"];
+var serviceAccountPath = builder.Configuration["Firebase:ServiceAccountPath"] ?? "firebase-service-account.json";
+
+FirebaseAuthService.Initialize(serviceAccountPath, firebaseJson);
 
 // Apply pending EF Core migrations automatically on startup
 using (var scope = app.Services.CreateScope())

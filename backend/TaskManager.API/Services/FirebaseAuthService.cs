@@ -18,16 +18,29 @@ namespace TaskManager.API.Services
         }
 
         /// <summary>
-        /// Initializes the Firebase Admin SDK using the service account JSON file.
+        /// Initializes the Firebase Admin SDK using the service account JSON file or a raw JSON string.
         /// Should be called once at application startup.
         /// </summary>
-        public static void Initialize(string serviceAccountPath)
+        public static void Initialize(string? serviceAccountPath = null, string? jsonContent = null)
         {
             if (FirebaseApp.DefaultInstance != null) return; // Prevent double-initialization
 
+            GoogleCredential credential;
+
+            if (!string.IsNullOrEmpty(jsonContent))
+            {
+                // Initialize from raw JSON string (ideal for production environment variables)
+                credential = GoogleCredential.FromJson(jsonContent);
+            }
+            else
+            {
+                // Fallback to local file paths (ideal for local development)
+                credential = GoogleCredential.FromFile(serviceAccountPath ?? "firebase-service-account.json");
+            }
+
             FirebaseApp.Create(new AppOptions
             {
-                Credential = GoogleCredential.FromFile(serviceAccountPath)
+                Credential = credential
             });
         }
 

@@ -17,9 +17,8 @@ RUN dotnet publish -c Release -o /app
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 
-# Copy the published app and the firebase key from the build stage
+# Copy the published app from the build stage
 COPY --from=build /app .
-COPY --from=build /source/firebase-service-account.json .
 
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
