@@ -45,7 +45,9 @@ var app = builder.Build();
 
 // Initialize Firebase Admin SDK at startup
 var firebaseJson = Environment.GetEnvironmentVariable("FIREBASE_CONFIG_JSON") 
-    ?? builder.Configuration["FIREBASE_CONFIG_JSON"];
+    ?? Environment.GetEnvironmentVariable("FIREBASE_SERVICE_ACCOUNT_JSON")
+    ?? builder.Configuration["FIREBASE_CONFIG_JSON"]
+    ?? builder.Configuration["FIREBASE_SERVICE_ACCOUNT_JSON"];
 var serviceAccountPath = builder.Configuration["Firebase:ServiceAccountPath"] ?? "firebase-service-account.json";
 
 FirebaseAuthService.Initialize(serviceAccountPath, firebaseJson);
