@@ -3,7 +3,7 @@
 A professional, full-stack task management application built with **Next.js**, **ASP.NET Core**, **MySQL**, and **Firebase**. This project demonstrates clean architecture, cloud-to-cloud integration, and premium UI/UX design.
 
 ## 🔗 Live Demo
-- **Live Site:** [https://task-manager-gi8mwqonn-thisangadinath-7157s-projects.vercel.app](https://task-manager-gi8mwqonn-thisangadinath-7157s-projects.vercel.app)
+- **Live Site:** [https://task-manager-three-bice-55.vercel.app/](https://task-manager-three-bice-55.vercel.app/)
 
 ---
 
