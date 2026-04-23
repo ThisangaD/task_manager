@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Loader2, Sparkles, PlusCircle, CheckCircle2, Calendar, Flag } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 import { Task, CreateTaskPayload, Priority } from '@/types';
 
 interface AddTaskModalProps {
@@ -94,9 +94,6 @@ export default function AddTaskModal({ isOpen, editTask, onClose, onCreate, onUp
             
             <div className="px-8 pt-8 pb-6 border-b border-slate-700/50 bg-white/[0.02]">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.2)] border border-indigo-500/20">
-                  {editTask ? <Sparkles className="w-7 h-7" /> : <PlusCircle className="w-7 h-7" />}
-                </div>
                 <div>
                   <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                     {editTask ? 'Edit Mission' : 'Create New Mission'}
@@ -124,8 +121,8 @@ export default function AddTaskModal({ isOpen, editTask, onClose, onCreate, onUp
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2.5">
-                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1 flex items-center gap-2">
-                    <Flag className="w-3.5 h-3.5 text-slate-500" /> Priority Level
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">
+                    Priority Level
                   </label>
                   <div className="flex p-1.5 bg-[#060F25]/80 rounded-xl border border-slate-700/60 shadow-inner gap-1.5">
                     {(['Low', 'Medium', 'High'] as Priority[]).map((p) => {
@@ -154,8 +151,8 @@ export default function AddTaskModal({ isOpen, editTask, onClose, onCreate, onUp
                 </div>
 
                 <div className="space-y-2.5">
-                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1 flex items-center gap-2">
-                    <Calendar className="w-3.5 h-3.5 text-slate-500" /> Target Date
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">
+                    Target Date
                   </label>
                   <input
                     type="date"
@@ -202,7 +199,6 @@ export default function AddTaskModal({ isOpen, editTask, onClose, onCreate, onUp
                   ) : (
                     <>
                       <span>{editTask ? 'Save Updates' : 'Launch Mission'}</span>
-                      <CheckCircle2 className="w-4 h-4" />
                     </>
                   )}
                 </button>
